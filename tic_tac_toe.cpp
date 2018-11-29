@@ -1,536 +1,368 @@
-#include <iostream>
-#include <vector>
+#include<iostream>
+#include<vector>
 
 using namespace std;
 
+const int DIM = 3;
+const int SCORE = 10;
+const char PLAYER = 'X';
+const char OPPONENT = 'O';
+const int INFINITE = INT16_MAX;
+
+class TicTacToe{
+ 	private:
+ 		char playBoard[DIM][DIM];
+ 		pair<int, int> chosenPoint;
+ 		int whoWon;
+
+ 	public:
+ 	/*
+	TicTacToe() Constructor - Initialize board
+ 	*/
+ 	TicTacToe()
+ 	{
+ 		for(int i = 0; i < DIM; i++)
+ 		{
+ 			for(int j = 0; j < DIM; j++)
+ 			{
+ 				playBoard[i][j] = '_';
+ 			}
+ 		}
+ 		whoWon = 0;
+ 	}
+
+ 	int evaluateCurrentConfiguration();
+ 	void displayBoard();
+ 	bool isGameOver();
+ 	int miniMaxAlgorithm(int, bool);
+ 	pair<int, int> findBestMove();
+ 	bool makeAMove(int, int, bool);
+ 	void startGame();
+ 	void endGame();
+};
+
+
 /*
-THIS IS A 3X3 COMPUTER VS HUMAN TIC_TAC_TOE GAME 
+void displayBoard() - To display the current status of the
+playing board
 */
 
-int tac_toe[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
-int mr,mc;
+void TicTacToe::displayBoard()
+{
+	for(int i = 0; i < DIM; i++)
+	{
+		for(int j = 0; j < DIM; j++)
+		{
+			cout << playBoard[i][j];
+		}
+		cout << endl;
+	}
+}
+
 /*
-MINI AND MAX FUCNTIONS MAKE MUTUAL RECURSIVE CALLS UNTILL THEY REACH THE END NODE 
-WHICH IS THE STATE IN WHICH EITHER OF THEM WINS OR GAME DRAWS
+bool isGameOver() - To know whether the game is over
 */
-int mini(int dbvalue);	//dbvalue stands for depth based value -- it's purpose is explained inside the function
-int max(int dbvalue);
-int root(int dbvalue);
 
-void display();
-int win(bool side);		//checks if anyside has won
-
-int evaluate(int dbvalue,bool side,int r,int c);
-int nodes=0;
-//		false -> mini
-//		true -> max
-
-int root(int dbvalue)		// 1 -> o & 2 -> x  // o -> false & x -> true
+bool TicTacToe::isGameOver()
 {
-	int a;
-	int result = 1;
-	if(tac_toe[0][0] == 0)
+	//Row checking
+	for(int i = 0; i < DIM; i++)
 	{
-		a = evaluate(dbvalue,false,0,0);
-		if(a <= result)
+		int matching = 0;
+		for(int j = 1; j < DIM; j++)
 		{
-			result = a;
-			mr = 0;
-			mc =0;
-		}
-	}
-	if(tac_toe[0][1] == 0)
-	{
-		a = evaluate(dbvalue,false,0,1);
-		if(a <= result)
-		{
-			result = a;
-			mr = 0;
-			mc =1;
-		}
-	}
-	if(tac_toe[0][2] == 0)
-	{
-		a = evaluate(dbvalue,false,0,2);
-		if(a <= result)
-		{
-			result = a;
-			mr = 0;
-			mc =2;
-		}
-	}
-	if(tac_toe[1][0] == 0)
-	{
-		a = evaluate(dbvalue,false,1,0);
-		if(a <= result)
-		{
-			result = a;
-			mr = 1;
-			mc =0;
-		}
-	}
-	if(tac_toe[1][1] == 0)
-	{
-		a = evaluate(dbvalue,false,1,1);
-		if(a <= result)
-		{
-			result = a;
-			mr = 1;
-			mc =1;
-		}
-	}
-	if(tac_toe[1][2] == 0)
-	{
-		a = evaluate(dbvalue,false,1,2);
-		if(a <= result)
-		{
-			result = a;
-			mr = 1;
-			mc =2;
-		}
-	}
-	if(tac_toe[2][0] == 0)
-	{
-		a = evaluate(dbvalue,false,2,0);
-		if(a <= result)
-		{
-			result = a;
-			mr = 2;
-			mc =0;
-		}
-	}
-	if(tac_toe[2][1] == 0)
-	{
-		a = evaluate(dbvalue,false,2,1);
-		if(a <= result)
-		{
-			result = a;
-			mr = 2;
-			mc =1;
-		}
-	}
-	if(tac_toe[2][2] == 0)
-	{
-		a = evaluate(dbvalue,false,2,2);
-		if(a <= result)
-		{
-			result = a;
-			mr = 2;
-			mc =2;
-		}
-	}
-	return result;
-	
-}
-
-
-
-int mini(int dbvalue)		// 1 -> o & 2 -> x  // o -> false & x -> true
-{
-	nodes++;
-	int a;
-	vector<int> result;
-	if(tac_toe[0][0] == 0)
-	{
-		a = evaluate(dbvalue,false,0,0);
-		result.push_back(a);
-	}
-	if(tac_toe[0][1] == 0)
-	{
-		a = evaluate(dbvalue,false,0,1);
-		result.push_back(a);
-	}
-	if(tac_toe[0][2] == 0)
-	{
-		a = evaluate(dbvalue,false,0,2);
-		result.push_back(a);
-	}
-	if(tac_toe[1][0] == 0)
-	{
-		a = evaluate(dbvalue,false,1,0);
-		result.push_back(a);
-	}
-	if(tac_toe[1][1] == 0)
-	{
-		a = evaluate(dbvalue,false,1,1);
-		result.push_back(a);
-	}
-	if(tac_toe[1][2] == 0)
-	{
-		a = evaluate(dbvalue,false,1,2);
-		result.push_back(a);
-	}
-	if(tac_toe[2][0] == 0)
-	{
-		a = evaluate(dbvalue,false,2,0);
-		result.push_back(a);
-	}
-	if(tac_toe[2][1] == 0)
-	{
-		a = evaluate(dbvalue,false,2,1);
-		result.push_back(a);
-	}
-	if(tac_toe[2][2] == 0)
-	{
-		a = evaluate(dbvalue,false,2,2);
-		result.push_back(a);
-	}
-		
-	
-		int i,small=1;
-		for(i=0;i<result.size();i++)
-		{
-			if(result[i] < small)
+			if(playBoard[i][j] == playBoard[i][j - 1] && playBoard[i][j] != '_')
 			{
-				small = result[i];
+				++matching;
 			}
 		}
-		return small;
-
-	
-}
-
-
-int max(int dbvalue)		// 1 -> o & 2 -> x  // o -> false & x -> true
-{
-	nodes++;
-	int a;
-	vector<int> result;
-	if(tac_toe[0][0] == 0)
-	{
-		a = evaluate(dbvalue,true,0,0);
-		result.push_back(a);
-	}
-	if(tac_toe[0][1] == 0)
-	{
-		a = evaluate(dbvalue,true,0,1);
-		result.push_back(a);
-	}
-	if(tac_toe[0][2] == 0)
-	{
-		a = evaluate(dbvalue,true,0,2);
-		result.push_back(a);
-	}
-	if(tac_toe[1][0] == 0)
-	{
-		a = evaluate(dbvalue,true,1,0);
-		result.push_back(a);
-	}
-		
-	if(tac_toe[1][1] == 0)
-	{
-		a = evaluate(dbvalue,true,1,1);
-		result.push_back(a);
-	}
-	if(tac_toe[1][2] == 0)
-	{
-		a = evaluate(dbvalue,true,1,2);
-		result.push_back(a);
-	}
-	if(tac_toe[2][0] == 0)
-	{
-		a = evaluate(dbvalue,true,2,0);
-		result.push_back(a);
-	}
-	if(tac_toe[2][1] == 0)
-	{
-		a = evaluate(dbvalue,true,2,1);
-		result.push_back(a);
-	}
-	if(tac_toe[2][2] == 0)
-	{
-		a = evaluate(dbvalue,true,2,2);
-		result.push_back(a);
-	}
-		
-		
-		int i,large=-1;
-		for(i=0;i<result.size();i++)
+		//Current Row matches
+		if(matching == DIM - 1)
 		{
-			if(result[i] > large)
+			whoWon = (playBoard[i][0] == PLAYER ? -1 : 1);
+			return true;
+		}
+	}
+
+	//Column Checking
+	for(int i = 0; i < DIM; i++)
+	{
+		int matching = 0;
+		for(int j = 1; j < DIM; j++)
+		{
+			if(playBoard[j][i] == playBoard[j - 1][i] && playBoard[i][j] != '_')
 			{
-				large = result[i];
+				++matching;
 			}
 		}
-		return large;
-	
+		//Current column matches
+		if(matching == DIM - 1)
+		{
+			whoWon = (playBoard[0][i] == PLAYER ? -1 : 1);
+			return true;
+		}
+	}
+
+	//Primary diagonal checking
+	int matching = 0;
+	for(int i = 1; i < DIM; i++)
+	{
+		if(playBoard[i][i] == playBoard[i - 1][i - 1] && playBoard[i][i] != '_')
+		{
+			matching++;
+		}
+	}
+	if(matching == DIM - 1)
+	{
+		whoWon = (playBoard[0][0] == PLAYER ? -1 : 1);
+		return true;
+	}
+
+	//Secondary Diagonal Checking
+	matching = 0;
+	for(int i = 1; i < DIM; i++)
+	{
+		if(playBoard[i][DIM - i - 1] == playBoard[i - 1][DIM - i] && playBoard[i][DIM - i - 1] != '_')
+		{
+			matching++;
+		}
+	}
+	if(matching == DIM - 1)
+	{
+		whoWon = (playBoard[0][DIM - 1] == PLAYER ? -1 : 1);
+		return true;
+	}
+
+	// Check for empty spaces if any
+	for(int i = 0; i < 3; i++)
+	{
+		for(int j = 0; j < 3; j++)
+		{
+			if(playBoard[i][j] == '_')
+			{
+				return false;
+			}
+		}
+	}
+	return true;
 }
 
-int evaluate (int dbvalue,bool side,int r,int c)
-{
-	if (side == false)
-	{
-		tac_toe[r][c] = 1;
-	}
-	else
-	{
-		tac_toe[r][c] = 2;
-	}
-	
-	int res;
-	
-	if( tac_toe[0][0] == tac_toe[0][1] && tac_toe[0][0] == tac_toe[0][2] && tac_toe[0][0] == 1)
-	{
-		tac_toe[r][c] = 0;
-		return -dbvalue;
-	}
-	else if ( tac_toe[1][0] == tac_toe[1][1] && tac_toe[1][0] == tac_toe[1][2] && tac_toe[1][0] == 1)
-	{
-		tac_toe[r][c] = 0;
-		return -dbvalue;
-	}
-	else if ( tac_toe[2][0] == tac_toe[2][1] && tac_toe[2][0] == tac_toe[2][2] && tac_toe[2][0] == 1)
-	{
-		tac_toe[r][c] = 0;
-		return -dbvalue;
-	}
-	else if ( tac_toe[0][0] == tac_toe[1][0] && tac_toe[0][0] == tac_toe[2][0] && tac_toe[0][0] == 1)
-	{
-		tac_toe[r][c] = 0;
-		return -dbvalue;
-	}
-	else if ( tac_toe[0][1] == tac_toe[1][1] && tac_toe[0][1] == tac_toe[2][1] && tac_toe[0][1] == 1)
-	{
-		tac_toe[r][c] = 0;
-		return -dbvalue;
-	}
-	else if ( tac_toe[0][2] == tac_toe[1][2] && tac_toe[0][2] == tac_toe[2][2] && tac_toe[0][2] == 1)
-	{
-		tac_toe[r][c] = 0;
-		return -dbvalue;
-	}
-	else if ( tac_toe[0][0] == tac_toe[1][1] && tac_toe[0][0] == tac_toe[2][2] && tac_toe[0][0] == 1)
-	{
-		tac_toe[r][c] = 0;
-		return -dbvalue;
-	}
-	else if ( tac_toe[0][2] == tac_toe[1][1] && tac_toe[0][2] == tac_toe[2][0] && tac_toe[0][2] == 1)
-	{
-		tac_toe[r][c] = 0;
-		return -dbvalue;
-	}
-	
-	
-	
-	else if( tac_toe[0][0] == tac_toe[0][1] && tac_toe[0][0] == tac_toe[0][2] && tac_toe[0][0] == 2)
-	{
-		tac_toe[r][c] = 0;
-		return dbvalue;
-	}
-	else if ( tac_toe[1][0] == tac_toe[1][1] && tac_toe[1][0] == tac_toe[1][2] && tac_toe[1][0] == 2)
-	{
-		tac_toe[r][c] = 0;
-		return dbvalue;
-	}
-	else if ( tac_toe[2][0] == tac_toe[2][1] && tac_toe[2][0] == tac_toe[2][2] && tac_toe[2][0] == 2)
-	{
-		tac_toe[r][c] = 0;
-		return dbvalue;
-	}
-	else if ( tac_toe[0][0] == tac_toe[1][0] && tac_toe[0][0] == tac_toe[2][0] && tac_toe[0][0] == 2)
-	{
-		tac_toe[r][c] = 0;
-		return dbvalue;
-	}
-	else if ( tac_toe[0][1] == tac_toe[1][1] && tac_toe[0][1] == tac_toe[2][1] && tac_toe[0][1] == 2)
-	{
-		tac_toe[r][c] = 0;
-		return dbvalue;
-	}
-	else if ( tac_toe[0][2] == tac_toe[1][2] && tac_toe[0][2] == tac_toe[2][2] && tac_toe[0][2] == 2)
-	{
-		tac_toe[r][c] = 0;
-		return dbvalue;
-	}
-	else if ( tac_toe[0][0] == tac_toe[1][1] && tac_toe[0][0] == tac_toe[2][2] && tac_toe[0][0] == 2)
-	{
-		tac_toe[r][c] = 0;
-		return dbvalue;
-	}
-	else if ( tac_toe[0][2] == tac_toe[1][1] && tac_toe[0][2] == tac_toe[2][0] && tac_toe[0][2] == 2)
-	{
-		tac_toe[r][c] = 0;
-		return dbvalue;
-	}
-	else if ( tac_toe[0][0] != 0 && tac_toe[0][1] != 0 && tac_toe[0][2] != 0 && tac_toe[1][0] != 0 && tac_toe[1][1] != 0 && tac_toe[1][2] != 0 && tac_toe[2][0] != 0 && tac_toe[2][1] != 0 && tac_toe[2][2] != 0 )
-	{
-		tac_toe[r][c] = 0;
-		return 0;
-	}
-	else
-	{
-		//return minimax(!side);
-		if(side == false)
-		{
-			res = max(dbvalue-1);
-			tac_toe[r][c] = 0;
-			return res;
-		}
-		else
-		{
-			res = mini(dbvalue-1);
-			tac_toe[r][c] = 0;
-			return res;
-		}
-	}	
-	
-}
+/*
+int evaluateCurrentConfiguration() - See whether anyone has won, else call
+MiniMax Algorithm. 
+*/
 
-void display()
+int TicTacToe::evaluateCurrentConfiguration()
 {
-	int i,j;
-	for(i=0;i<3;i++)
+	//Row checking
+	for(int i = 0; i < DIM; i++)
 	{
-		for(j=0;j<3;j++)
+		int matching = 0;
+		for(int j = 1; j < DIM; j++)
 		{
-			cout<<tac_toe[i][j]<<" ";
+			if(playBoard[i][j] == playBoard[i][j - 1])
+			{
+				++matching;
+			}
 		}
-		cout<<endl;
+		//Current Row matches
+		if(matching == DIM - 1)
+		{
+			return playBoard[i][0] == PLAYER ? SCORE : -SCORE;
+		}
 	}
-}
 
-
-int draw()
-{
-	if ( tac_toe[0][0] != 0 && tac_toe[0][1] != 0 && tac_toe[0][2] != 0 && tac_toe[1][0] != 0 && tac_toe[1][1] != 0 && tac_toe[1][2] != 0 && tac_toe[2][0] != 0 && tac_toe[2][1] != 0 && tac_toe[2][2] != 0 )
+	//Column Checking
+	for(int i = 0; i < DIM; i++)
 	{
-		return 1;
+		int matching = 0;
+		for(int j = 1; j < DIM; j++)
+		{
+			if(playBoard[j][i] == playBoard[j - 1][i])
+			{
+				++matching;
+			}
+		}
+		//Current column matches
+		if(matching == DIM - 1)
+		{
+			return playBoard[0][i] == PLAYER ? SCORE : -SCORE;
+		}
 	}
+
+	//Primary diagonal checking
+	int matching = 0;
+	for(int i = 1; i < DIM; i++)
+	{
+		if(playBoard[i][i] == playBoard[i - 1][i - 1])
+		{
+			matching++;
+		}
+	}
+	if(matching == DIM - 1)
+	{
+		return playBoard[0][0] == PLAYER ? SCORE : -SCORE;
+	}
+
+	//Secondary Diagonal Checking
+	matching = 0;
+	for(int i = 1; i < DIM; i++)
+	{
+		if(playBoard[i][DIM - i - 1] == playBoard[i - 1][DIM - i])
+		{
+			matching++;
+		}
+	}
+	if(matching == DIM - 1)
+	{
+		return playBoard[0][DIM - 1] == PLAYER ? SCORE : -SCORE;
+	}
+
+	//No one in winning position
 	return 0;
 }
 
-int win(bool side)
+/*
+int miniMaxAlgorithm(int, bool);
+Algorithm to give the best move as per the requirement
+*/
+
+int TicTacToe::miniMaxAlgorithm(int depth, bool isMax)
 {
-	if(side == false)
+	int currentScore = evaluateCurrentConfiguration();
+	
+	// If there is a winning position
+	if(abs(currentScore) == SCORE)
 	{
-	if( tac_toe[0][0] == tac_toe[0][1] && tac_toe[0][0] == tac_toe[0][2] && tac_toe[0][0] == 1)
-	{
-		return 1;
+		return currentScore;
 	}
-	else if ( tac_toe[1][0] == tac_toe[1][1] && tac_toe[1][0] == tac_toe[1][2] && tac_toe[1][0] == 1)
+
+	// If there is no move left
+	if(isGameOver())
 	{
-		return 1;
+		return 0;
 	}
-	else if ( tac_toe[2][0] == tac_toe[2][1] && tac_toe[2][0] == tac_toe[2][2] && tac_toe[2][0] == 1)
+
+	else
 	{
-		return 1;
+		int currentBest = (isMax ? -INFINITE : INFINITE);
+		for(int i = 0; i < DIM; i++)
+		{
+			for(int j = 0; j < DIM; j++)
+			{
+				if(playBoard[i][j] == '_')
+				{
+					playBoard[i][j] = (isMax ? PLAYER : OPPONENT);
+					currentBest = (isMax ? max(currentBest, miniMaxAlgorithm(depth + 1, !isMax)) : 
+						min(currentBest, miniMaxAlgorithm(depth + 1, !isMax)));
+					playBoard[i][j] = '_';
+				}
+			}
+		}
+		return currentBest;
 	}
-	else if ( tac_toe[0][0] == tac_toe[1][0] && tac_toe[0][0] == tac_toe[2][0] && tac_toe[0][0] == 1)
+}
+
+
+/*
+pair<int, int> findBestMove() - A function to find the best move using Minimax
+*/
+
+pair<int, int> TicTacToe::findBestMove()
+{
+	int currentBest = -INFINITE;
+	for(int i = 0; i < DIM; i++)
 	{
-		return 1;
+		for(int j = 0; j < DIM; j++)
+		{
+			if(playBoard[i][j] == '_')
+			{
+				playBoard[i][j] = PLAYER;
+				int currentValue = miniMaxAlgorithm(0, false);
+				playBoard[i][j] = '_';
+				if(currentValue > currentBest)
+				{
+					currentBest = currentValue;
+					chosenPoint.first = i;
+					chosenPoint.second = j;
+				}
+			}
+		}
 	}
-	else if ( tac_toe[0][1] == tac_toe[1][1] && tac_toe[0][1] == tac_toe[2][1] && tac_toe[0][1] == 1)
+	return chosenPoint;
+}
+
+/*
+bool makeAMove(int, int, bool) - A function to make a move for player if possible
+*/
+
+bool TicTacToe::makeAMove(int row, int column, bool isPlayer)
+{
+	// Checking for out of bound or already used space
+	if(row >= 0 && row < DIM && column >= 0 && column < DIM && playBoard[row][column] == '_')
 	{
-		return 1;
+		playBoard[row][column] = (isPlayer ? PLAYER : OPPONENT);
+		return true;
 	}
-	else if ( tac_toe[0][2] == tac_toe[1][2] && tac_toe[0][2] == tac_toe[2][2] && tac_toe[0][2] == 1)
+	cout << "\nIllegal Move!! Move either out of board or the place is already filled! \n";
+	return false;	
+}
+
+/*
+void startGame() - A function to handle all the Game's functionality
+*/
+
+void TicTacToe::startGame()
+{
+	cout << "\n\n\t\t\t TIC - TAC - TOE Using MiniMax Algorithm \n";
+	cout << "\n\t\t\t Player Takes " << PLAYER << " and Computer takes " << OPPONENT << " - " << DIM << "x" << DIM << " Game\n";
+	while(!isGameOver())
 	{
-		return 1;
+		cout << "\nBoard Status: \n";
+		displayBoard();
+		int row, column;
+		do {
+			cout << "\nEnter Row and Column (0 based) to cross: ";
+			cin >> row >> column;
+		} while(!makeAMove(row, column, true));
+
+		// Opponents Move
+		if(!isGameOver())
+		{
+			pair<int, int> opponentsMove = findBestMove();
+			makeAMove(opponentsMove.first, opponentsMove.second, false);	
+			cout << "\nComputer chooses Row: " << opponentsMove.first << " Column: " << opponentsMove.second;
+			cout << endl;
+		}
 	}
-	else if ( tac_toe[0][0] == tac_toe[1][1] && tac_toe[0][0] == tac_toe[2][2] && tac_toe[0][0] == 1)
+	cout << endl;
+}
+
+/*
+void endGame() - To print who won / if the match is drawn
+*/
+
+void TicTacToe::endGame()
+{
+	if(!whoWon)
 	{
-		return 1;
+		cout << "\n\n Match Result: Match is Drawn!!";
 	}
-	else if ( tac_toe[0][2] == tac_toe[1][1] && tac_toe[0][2] == tac_toe[2][0] && tac_toe[0][2] == 1)
+	else if(whoWon == -1)
 	{
-		return 1;
+		cout << "\n\n Match Result: Match is WON by PLAYER!!";
 	}
 	else
 	{
-		return 0;
+		cout << "\n\n Match Result: Match is WON by Computer!!";
 	}
-	}
-	
-	
-	else if(side == true)
-	{
-	if( (tac_toe[0][0] == tac_toe[0][1] ) && (tac_toe[0][0] == tac_toe[0][2] ) && (tac_toe[0][0] == 2) ) 
-	{
-		return 1;
-	}
-	else if ( tac_toe[1][0] == tac_toe[1][1] && tac_toe[1][0] == tac_toe[1][2] && tac_toe[1][0] == 2)
-	{
-		return 1;
-	}
-	else if ( tac_toe[2][0] == tac_toe[2][1] && tac_toe[2][0] == tac_toe[2][2] && tac_toe[2][0] == 2)
-	{
-		return 1;
-	}
-	else if ( tac_toe[0][0] == tac_toe[1][0] && tac_toe[0][0] == tac_toe[2][0] && tac_toe[0][0] == 2)
-	{
-		return 1;
-	}
-	else if ( tac_toe[0][1] == tac_toe[1][1] && tac_toe[0][1] == tac_toe[2][1] && tac_toe[0][1] == 2)
-	{
-		return 1;
-	}
-	else if ( tac_toe[0][2] == tac_toe[1][2] && tac_toe[0][2] == tac_toe[2][2] && tac_toe[0][2] == 2)
-	{
-		return 1;
-	}
-	else if ( tac_toe[0][0] == tac_toe[1][1] && tac_toe[0][0] == tac_toe[2][2] && tac_toe[0][0] == 2)
-	{
-		return 1;
-	}
-	else if ( tac_toe[0][2] == tac_toe[1][1] && tac_toe[0][2] == tac_toe[2][0] && tac_toe[0][2] == 2)
-	{
-		return 1;
-	}
-	else 
-	{
-		return 0;
-	}
-	}
+	cout << endl;
 }
 
 int main()
 {
-	int rw,cl;
-	while(1)
-	{
-		
-	display();
-	cout<<"Nodes reached: "<<nodes<<endl;
-	nodes=0;
-	cout<<"YOUR TURN --"<<endl;
-	cout<<"ROW: ";
-	cin>>rw;
-	cout<<"COLUMN: ";
-	cin>>cl;
-	tac_toe[rw][cl] = 2;
-	display();
-	if(win(true))
-	{
-		cout<<"YOU WIN"<<endl;
-		break;
-	}
-	if(draw())
-	{
-		cout<<"GAME DRAW"<<endl;
-		break;
-	}
-	root(10);
-	cout<<nodes<<endl;
-	tac_toe[mr][mc] = 1;
-	if(win(false))
-	{
-		display();
-		cout<<"COMPUTER WIN"<<endl;
-		break;
-	}
-	if(draw())
-	{
-		display();
-		cout<<"GAME DRAW"<<endl;
-		break;
-	}
-	cout<<"COMPUTER --"<<endl;
-	
-	
-	}
-	
+	TicTacToe T;
+	T.startGame();
+	T.endGame();
 	return 0;
 }
-
-
-

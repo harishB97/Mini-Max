@@ -90,7 +90,7 @@ bool TicTacToe::isGameOver()
 		int matching = 0;
 		for(int j = 1; j < DIM; j++)
 		{
-			if(playBoard[j][i] == playBoard[j - 1][i] && playBoard[i][j] != '_')
+			if(playBoard[j][i] == playBoard[j - 1][i] && playBoard[j][i] != '_')
 			{
 				++matching;
 			}
@@ -160,7 +160,7 @@ int TicTacToe::evaluateCurrentConfiguration()
 		int matching = 0;
 		for(int j = 1; j < DIM; j++)
 		{
-			if(playBoard[i][j] == playBoard[i][j - 1])
+			if(playBoard[i][j] == playBoard[i][j - 1] && playBoard[i][j] != '_')
 			{
 				++matching;
 			}
@@ -178,7 +178,7 @@ int TicTacToe::evaluateCurrentConfiguration()
 		int matching = 0;
 		for(int j = 1; j < DIM; j++)
 		{
-			if(playBoard[j][i] == playBoard[j - 1][i])
+			if(playBoard[j][i] == playBoard[j - 1][i] && playBoard[j][i] != '_')
 			{
 				++matching;
 			}
@@ -194,7 +194,7 @@ int TicTacToe::evaluateCurrentConfiguration()
 	int matching = 0;
 	for(int i = 1; i < DIM; i++)
 	{
-		if(playBoard[i][i] == playBoard[i - 1][i - 1])
+		if(playBoard[i][i] == playBoard[i - 1][i - 1] && playBoard[i][i] != '_')
 		{
 			matching++;
 		}
@@ -208,7 +208,7 @@ int TicTacToe::evaluateCurrentConfiguration()
 	matching = 0;
 	for(int i = 1; i < DIM; i++)
 	{
-		if(playBoard[i][DIM - i - 1] == playBoard[i - 1][DIM - i])
+		if(playBoard[i][DIM - i - 1] == playBoard[i - 1][DIM - i] && playBoard[i][DIM - i - 1] != '_')
 		{
 			matching++;
 		}
@@ -253,8 +253,8 @@ int TicTacToe::miniMaxAlgorithm(int depth, bool isMax)
 				if(playBoard[i][j] == '_')
 				{
 					playBoard[i][j] = (isMax ? PLAYER : OPPONENT);
-					currentBest = (isMax ? max(currentBest, miniMaxAlgorithm(depth + 1, !isMax)) : 
-						min(currentBest, miniMaxAlgorithm(depth + 1, !isMax)));
+					currentBest = (isMax ? max(currentBest - depth, miniMaxAlgorithm(depth + 1, !isMax)) : 
+						min(currentBest + depth, miniMaxAlgorithm(depth + 1, !isMax)));
 					playBoard[i][j] = '_';
 				}
 			}
