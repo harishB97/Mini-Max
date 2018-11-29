@@ -32,7 +32,7 @@ int root(int dbvalue)		// 1 -> o & 2 -> x  // o -> false & x -> true
 	if(tac_toe[0][0] == 0)
 	{
 		a = evaluate(dbvalue,false,0,0);
-		if(a <= result)
+		if(a < result)
 		{
 			result = a;
 			mr = 0;
@@ -42,7 +42,7 @@ int root(int dbvalue)		// 1 -> o & 2 -> x  // o -> false & x -> true
 	if(tac_toe[0][1] == 0)
 	{
 		a = evaluate(dbvalue,false,0,1);
-		if(a <= result)
+		if(a < result)
 		{
 			result = a;
 			mr = 0;
@@ -52,7 +52,7 @@ int root(int dbvalue)		// 1 -> o & 2 -> x  // o -> false & x -> true
 	if(tac_toe[0][2] == 0)
 	{
 		a = evaluate(dbvalue,false,0,2);
-		if(a <= result)
+		if(a < result)
 		{
 			result = a;
 			mr = 0;
@@ -62,7 +62,7 @@ int root(int dbvalue)		// 1 -> o & 2 -> x  // o -> false & x -> true
 	if(tac_toe[1][0] == 0)
 	{
 		a = evaluate(dbvalue,false,1,0);
-		if(a <= result)
+		if(a < result)
 		{
 			result = a;
 			mr = 1;
@@ -72,7 +72,7 @@ int root(int dbvalue)		// 1 -> o & 2 -> x  // o -> false & x -> true
 	if(tac_toe[1][1] == 0)
 	{
 		a = evaluate(dbvalue,false,1,1);
-		if(a <= result)
+		if(a < result)
 		{
 			result = a;
 			mr = 1;
@@ -82,7 +82,7 @@ int root(int dbvalue)		// 1 -> o & 2 -> x  // o -> false & x -> true
 	if(tac_toe[1][2] == 0)
 	{
 		a = evaluate(dbvalue,false,1,2);
-		if(a <= result)
+		if(a < result)
 		{
 			result = a;
 			mr = 1;
@@ -92,7 +92,7 @@ int root(int dbvalue)		// 1 -> o & 2 -> x  // o -> false & x -> true
 	if(tac_toe[2][0] == 0)
 	{
 		a = evaluate(dbvalue,false,2,0);
-		if(a <= result)
+		if(a < result)
 		{
 			result = a;
 			mr = 2;
@@ -102,7 +102,7 @@ int root(int dbvalue)		// 1 -> o & 2 -> x  // o -> false & x -> true
 	if(tac_toe[2][1] == 0)
 	{
 		a = evaluate(dbvalue,false,2,1);
-		if(a <= result)
+		if(a < result)
 		{
 			result = a;
 			mr = 2;
@@ -112,7 +112,7 @@ int root(int dbvalue)		// 1 -> o & 2 -> x  // o -> false & x -> true
 	if(tac_toe[2][2] == 0)
 	{
 		a = evaluate(dbvalue,false,2,2);
-		if(a <= result)
+		if(a < result)
 		{
 			result = a;
 			mr = 2;
