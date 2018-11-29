@@ -31,7 +31,7 @@ class TicTacToe{
  		whoWon = 0;
  	}
 
- 	int evaluateCurrentConfiguration();
+ 	int evaluateCurrentConfiguration(int);
  	void displayBoard();
  	bool isGameOver();
  	int miniMaxAlgorithm(int, bool);
@@ -134,9 +134,10 @@ bool TicTacToe::isGameOver()
 	}
 
 	// Check for empty spaces if any
-	for(int i = 0; i < 3; i++)
+	whoWon = 0;
+	for(int i = 0; i < DIM; i++)
 	{
-		for(int j = 0; j < 3; j++)
+		for(int j = 0; j < DIM; j++)
 		{
 			if(playBoard[i][j] == '_')
 			{
@@ -148,11 +149,11 @@ bool TicTacToe::isGameOver()
 }
 
 /*
-int evaluateCurrentConfiguration() - See whether anyone has won, else call
+int evaluateCurrentConfiguration(int) - See whether anyone has won, else call
 MiniMax Algorithm. 
 */
 
-int TicTacToe::evaluateCurrentConfiguration()
+int TicTacToe::evaluateCurrentConfiguration(int depth)
 {
 	//Row checking
 	for(int i = 0; i < DIM; i++)
@@ -168,7 +169,7 @@ int TicTacToe::evaluateCurrentConfiguration()
 		//Current Row matches
 		if(matching == DIM - 1)
 		{
-			return playBoard[i][0] == PLAYER ? SCORE : -SCORE;
+			return (playBoard[i][0] == PLAYER ? SCORE : -SCORE) * depth;
 		}
 	}
 
@@ -186,7 +187,7 @@ int TicTacToe::evaluateCurrentConfiguration()
 		//Current column matches
 		if(matching == DIM - 1)
 		{
-			return playBoard[0][i] == PLAYER ? SCORE : -SCORE;
+			return (playBoard[0][i] == PLAYER ? SCORE : -SCORE) * depth;
 		}
 	}
 
@@ -201,7 +202,7 @@ int TicTacToe::evaluateCurrentConfiguration()
 	}
 	if(matching == DIM - 1)
 	{
-		return playBoard[0][0] == PLAYER ? SCORE : -SCORE;
+		return (playBoard[0][0] == PLAYER ? SCORE : -SCORE) * depth;
 	}
 
 	//Secondary Diagonal Checking
@@ -215,7 +216,7 @@ int TicTacToe::evaluateCurrentConfiguration()
 	}
 	if(matching == DIM - 1)
 	{
-		return playBoard[0][DIM - 1] == PLAYER ? SCORE : -SCORE;
+		return (playBoard[0][DIM - 1] == PLAYER ? SCORE : -SCORE) * depth;
 	}
 
 	//No one in winning position
@@ -229,20 +230,12 @@ Algorithm to give the best move as per the requirement
 
 int TicTacToe::miniMaxAlgorithm(int depth, bool isMax)
 {
-	int currentScore = evaluateCurrentConfiguration();
-	
-	// If there is a winning position
-	if(abs(currentScore) == SCORE)
-	{
-		return currentScore;
-	}
 
 	// If there is no move left
 	if(isGameOver())
 	{
-		return 0;
+		return evaluateCurrentConfiguration(depth);;
 	}
-
 	else
 	{
 		int currentBest = (isMax ? -INFINITE : INFINITE);
@@ -253,8 +246,8 @@ int TicTacToe::miniMaxAlgorithm(int depth, bool isMax)
 				if(playBoard[i][j] == '_')
 				{
 					playBoard[i][j] = (isMax ? PLAYER : OPPONENT);
-					currentBest = (isMax ? max(currentBest - depth, miniMaxAlgorithm(depth + 1, !isMax)) : 
-						min(currentBest + depth, miniMaxAlgorithm(depth + 1, !isMax)));
+					currentBest = (isMax ? max(currentBest, miniMaxAlgorithm(depth + 1, !isMax)) : 
+						min(currentBest, miniMaxAlgorithm(depth + 1, !isMax)));
 					playBoard[i][j] = '_';
 				}
 			}
@@ -270,17 +263,17 @@ pair<int, int> findBestMove() - A function to find the best move using Minimax
 
 pair<int, int> TicTacToe::findBestMove()
 {
-	int currentBest = -INFINITE;
+	int currentBest = INFINITE;
 	for(int i = 0; i < DIM; i++)
 	{
 		for(int j = 0; j < DIM; j++)
 		{
 			if(playBoard[i][j] == '_')
 			{
-				playBoard[i][j] = PLAYER;
-				int currentValue = miniMaxAlgorithm(0, false);
+				playBoard[i][j] = OPPONENT;
+				int currentValue = miniMaxAlgorithm(SCORE, true);
 				playBoard[i][j] = '_';
-				if(currentValue > currentBest)
+				if(currentValue < currentBest)
 				{
 					currentBest = currentValue;
 					chosenPoint.first = i;
